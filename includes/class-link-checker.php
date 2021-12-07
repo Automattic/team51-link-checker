@@ -103,6 +103,7 @@ class Link_Checker {
 		 * core plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-craw-logger.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality

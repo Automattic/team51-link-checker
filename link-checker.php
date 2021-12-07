@@ -30,6 +30,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+require_once dirname( __FILE__ ) . '/includes/class-link-checker.php';
+
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
@@ -42,7 +45,7 @@ define( 'LINK_CHECKER_VERSION', '1.0.0' );
  * This action is documented in includes/class-link-checker-activator.php
  */
 function activate_link_checker() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-activator.php';
+	//require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-activator.php';
 	Link_Checker_Activator::activate();
 }
 
@@ -51,7 +54,7 @@ function activate_link_checker() {
  * This action is documented in includes/class-link-checker-deactivator.php
  */
 function deactivate_link_checker() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-deactivator.php';
+	//require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-deactivator.php';
 	Link_Checker_Deactivator::deactivate();
 }
 
@@ -62,7 +65,7 @@ register_deactivation_hook( __FILE__, 'deactivate_link_checker' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-link-checker.php';
+//require plugin_dir_path( __FILE__ ) . 'includes/class-link-checker.php';
 
 /**
  * Begins execution of the plugin.

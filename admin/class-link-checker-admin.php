@@ -1,5 +1,10 @@
 <?php
 
+use GuzzleHttp\RequestOptions;
+use Spatie\Crawler\CrawlProfiles\CrawlAllUrls;
+use Spatie\Crawler\Crawler;
+use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -43,14 +48,13 @@ class Link_Checker_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of this plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	public function add_admin_menu() {
@@ -58,9 +62,53 @@ class Link_Checker_Admin {
 	}
 
 	function render_admin_page() {
-		$html = "<h1>Link Checker</h1>";
+		$html = '';
+		$html .= '<h1>Link Checker</h1>';
+
+		$this->scan();
+
 		echo $html;
-	}	
+	}
+
+
+	private function scan() {
+		$base_url = sprintf(
+			'%s://%s',
+			isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+			$_SERVER['SERVER_NAME']
+		);
+
+		if ( ! empty( $_GET['testurl'] ) ) {
+			$base_url = $_GET['testurl'];
+		}
+
+		$skip_external = true;
+		// $timeout       = \WP_CLI\Utils\get_flag_value( $assoc_args, 'timeout', 10 );
+
+		$crawl_profile = $skip_external ? new CrawlInternalUrls( $base_url ) : new CrawlAllUrls();
+
+		$crawl_logger = new CrawlLogger();
+		$crawl_logger->setOutputFile( 'linker.log' );
+
+		$concurrent_connections = 10;
+		$timeout                = 10;
+
+		$client_options = array(
+			RequestOptions::TIMEOUT         => $timeout,
+			RequestOptions::VERIFY          => ! $skip_external,
+			RequestOptions::ALLOW_REDIRECTS => array(
+				'track_redirects' => true,
+			),
+		);
+
+		$crawler = Crawler::create( $client_options )
+			->setConcurrency( $concurrent_connections )
+			->setCrawlObserver( $crawl_logger )
+			->setCrawlProfile( $crawl_profile )
+			->ignoreRobots();
+
+		$crawler->startCrawling( $base_url );
+	}
 
 	/**
 	 * Register the stylesheets for the admin area.
