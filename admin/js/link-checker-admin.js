@@ -29,4 +29,14 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+    $(function() {
+        // Events
+        $('#linkCheckerStartBtn').on('click', function() {
+            $('#linkCheckerStartBtn').attr('disabled', 1);
+            $.ajax('/wp-json/linkchecker/v1/check').done(() => {
+                $('#linkCheckerStartBtn').removeAttr('disabled');
+            });
+        });
+    });
+
 })( jQuery );

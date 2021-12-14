@@ -55,6 +55,20 @@ class Link_Checker_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+		$this->add_action_rest_api();
+	}
+
+	private function add_action_rest_api() {
+		// Custom endpoint
+		add_action( 'rest_api_init', function () {
+			register_rest_route( 'linkchecker/v1','/check',
+				array(
+						'methods'  => 'GET',
+						'callback' => array( $this, 'api_check' ),
+					)
+				);
+			}
+		);
 	}
 
 	public function add_admin_menu() {
@@ -64,12 +78,15 @@ class Link_Checker_Admin {
 	function render_admin_page() {
 		$html = '';
 		$html .= '<h1>Link Checker</h1>';
-
-		$this->scan();
+		$html .= '<button id="linkCheckerStartBtn">Start</button>';
 
 		echo $html;
 	}
 
+	function api_check() {
+		$this->scan();
+		return 'ok';
+	}
 
 	private function scan() {
 		$base_url = sprintf(
@@ -88,7 +105,7 @@ class Link_Checker_Admin {
 		$crawl_profile = $skip_external ? new CrawlInternalUrls( $base_url ) : new CrawlAllUrls();
 
 		$crawl_logger = new CrawlLogger();
-		$crawl_logger->setOutputFile( 'linker.log' );
+		//$crawl_logger->setOutputFile( 'linker.log' );
 
 		$concurrent_connections = 10;
 		$timeout                = 10;
@@ -152,7 +169,8 @@ class Link_Checker_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/link-checker-admin.js', array( 'jquery' ), $this->version, false );
+		$v = filemtime( plugin_dir_path( __FILE__ ) . 'js/link-checker-admin.js' );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/link-checker-admin.js', array( 'jquery' ), $v, false );
 
 	}
 

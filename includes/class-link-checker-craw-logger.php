@@ -34,63 +34,23 @@ class CrawlLogger extends CrawlObserver {
 	 * Called when the crawl has ended.
 	 */
 	public function finishedCrawling(): void {
-		file_put_contents( 'link-checker-status.log', 'done');
-
-		echo 'Crawling summary <br>';
-
 		ksort( $this->crawledUrls );
 
-		foreach ( $this->crawledUrls as $statusCode => $urls ) {
-			$colorTag = $this->getColorTagForStatusCode( $statusCode );
-
-			$count = count( $urls );
-
-			if ( is_numeric( $statusCode ) ) {
-				echo "Crawled {$count} url(s) with statuscode {$statusCode}<br>";
-			}
-
-			if ( $statusCode == static::UNRESPONSIVE_HOST ) {
-				echo "{$count} url(s) did have unresponsive host(s)<br>";
-			}
-		}
-	}
-
-	protected function getColorTagForStatusCode( string $code ): string {
-		if ( $this->startsWith( $code, '2' ) ) {
-			return 'success';
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once (ABSPATH . '/wp-admin/includes/file.php');
+			WP_Filesystem();
 		}
 
-		if ( $this->startsWith( $code, '3' ) ) {
-			return 'warning';
-		}
+		$crawl_content = array(
+			"date"   => date( "Y-m-d H:i:s" ),
+			"results" => $this->crawledUrls,
+		);
 
-		return 'error';
+		$last_result_file = plugin_dir_path(__DIR__) . 'link-checker-last-result.json';
+		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
 	}
 
-	/**
-	 * @param string|null  $haystack
-	 * @param string|array $needles
-	 *
-	 * @return bool
-	 */
-	public function startsWith( $haystack, $needles ): bool {
-		foreach ( (array) $needles as $needle ) {
-			if ( $needle != '' && substr( $haystack, 0, strlen( $needle ) ) === (string) $needle ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Set the filename to write the output log.
-	 *
-	 * @param string $filename
-	 */
-	public function setOutputFile( $filename ) {
-		$this->outputFile = $filename;
-	}
 
 	public function crawled(
 		UriInterface $url,
@@ -130,31 +90,6 @@ class CrawlLogger extends CrawlObserver {
 		if ( isset( $this->crawledUrls[ $statusCode ] ) && in_array( $url, $this->crawledUrls[ $statusCode ] ) ) {
 			return;
 		}
-		// Output 4xx status code only.
-		if ( $this->outputFile && $statusCode >= 400 ) {
-
-			$colorTag = $this->getColorTagForStatusCode( $statusCode );
-
-			$message   = "{$statusCode} {$reason} - " . (string) $url;
-			$msg_array = array( $statusCode, $reason, $url, $foundOnUrl );
-
-			if ( $foundOnUrl && $colorTag === 'error' ) {
-				$message .= " (found on {$foundOnUrl})";
-			}
-
-			$filePointer = fopen( $this->outputFile, 'a' );
-
-			try {
-				fputcsv( $filePointer, $msg_array );
-			} catch ( Exception $e ) {
-
-			} finally {
-				fclose( $filePointer );
-			}
-
-			echo "{$message}<br>";
-		}
-
 		$this->crawledUrls[ $statusCode ][] = $url;
 	}
 
