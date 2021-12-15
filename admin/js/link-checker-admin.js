@@ -30,11 +30,28 @@
 	 */
 
     $(function() {
+        init();
+        function init() {
+            pullLastData();
+        }
+
+        function pullLastData() {
+            $.ajax('/wp-content/plugins/team51-link-checker/link-checker-last-result.json').done(( data ) => {
+                console.log(data);
+
+                new Vue({
+                    el: '#link_checker_vue_app',
+                    data: data
+                });
+            })
+        }
+
         // Events
         $('#linkCheckerStartBtn').on('click', function() {
             $('#linkCheckerStartBtn').attr('disabled', 1);
             $.ajax('/wp-json/linkchecker/v1/check').done(() => {
                 $('#linkCheckerStartBtn').removeAttr('disabled');
+                pullLastData();
             });
         });
     });

@@ -79,6 +79,21 @@ class Link_Checker_Admin {
 		$html = '';
 		$html .= '<h1>Link Checker</h1>';
 		$html .= '<button id="linkCheckerStartBtn">Start</button>';
+		$html .= '
+		<div id="link_checker_vue_app">
+			Last check: {{ date }}
+
+		  	<div>
+			  	<div v-for="(urlsGroup, key) in results">
+				  	<h3>HTTP Code: {{ key === "---" ? "N/A" : key }}</h3>
+					<ul class="linkchecker__urls">
+						<li v-for="url in urlsGroup">
+							{{ url }}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>';
 
 		echo $html;
 	}
@@ -133,19 +148,6 @@ class Link_Checker_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Link_Checker_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Link_Checker_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/link-checker-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -157,17 +159,7 @@ class Link_Checker_Admin {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Link_Checker_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Link_Checker_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		wp_enqueue_script( 'vuejs', plugin_dir_url( __FILE__ ) . 'js/vue.js', array(), 1, false );
 
 		$v = filemtime( plugin_dir_path( __FILE__ ) . 'js/link-checker-admin.js' );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/link-checker-admin.js', array( 'jquery' ), $v, false );

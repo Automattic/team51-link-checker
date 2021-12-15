@@ -61,13 +61,16 @@ class CrawlLogger extends CrawlObserver {
 			return;
 		}
 
-		// response wasnt a redirect so lets add it as a standard result
-		$this->addResult(
-			(string) $url,
-			(string) $foundOnUrl,
-			$response->getStatusCode(),
-			$response->getReasonPhrase()
-		);
+		// exclude 200 responses
+		if ( $response->getStatusCode() != "200" ) {
+			$this->addResult(
+				(string) $url,
+				(string) $foundOnUrl,
+				$response->getStatusCode(),
+				$response->getReasonPhrase()
+			);
+		}
+
 	}
 
 	public function crawlFailed(
