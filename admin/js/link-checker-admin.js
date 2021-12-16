@@ -36,22 +36,30 @@
         }
 
         function pullLastData() {
-            $.ajax('/wp-content/plugins/team51-link-checker/link-checker-last-result.json').done(( data ) => {
+            $.ajax(`/wp-content/plugins/team51-link-checker/link-checker-last-result.json?v=${Date.now()}`).done(( data ) => {
                 console.log(data);
 
-                new Vue({
-                    el: '.link-checker__vue_app',
-                    data: data
-                });
+                if ( ! vm ) {
+                    var vm = new Vue({
+                        el: '.link-checker__vue_app',
+                        data: data
+                    });
+                }
+
+                vm.date = data.date;
+                vm.results = data.results;
             })
         }
 
-        // Events
-        $('#linkCheckerStartBtn').on('click', function() {
-            $('#linkCheckerStartBtn').attr('disabled', 1);
+        // Events. TODO: Move this to VueJS event
+        $(document).on('click', '.link-checker__btn-start', function() {
+            $('.link-checker__btn-start').attr('disabled', 1);
             $.ajax('/wp-json/linkchecker/v1/check').done(() => {
-                $('#linkCheckerStartBtn').removeAttr('disabled');
-                pullLastData();
+                $('.link-checker__btn-start').removeAttr('disabled');
+                // Give a few seconds while the new JSON file is created
+                setTimeout( () => {
+                    pullLastData();
+                }, 1000)
             });
         });
     });

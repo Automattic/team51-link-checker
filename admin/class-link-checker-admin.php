@@ -82,7 +82,7 @@ class Link_Checker_Admin {
 		<div class="link-checker__vue_app">
 			<div>
 				<div class="link-checker__last-check">Last check: {{ date }}</div>
-				<button class="link-checker__btn-start" id="linkCheckerStartBtn">Start Crawling</button>
+				<button class="link-checker__btn-start">Start Crawling</button>
 			</div>
 
 		  	<div>
