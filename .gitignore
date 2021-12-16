@@ -1,2 +1,4 @@
 /vendor/
 link-checker-last-result.json
+.DS_Store
+/admin/.DS_Store

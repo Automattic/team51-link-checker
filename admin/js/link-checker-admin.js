@@ -40,7 +40,7 @@
                 console.log(data);
 
                 new Vue({
-                    el: '#link_checker_vue_app',
+                    el: '.link-checker__vue_app',
                     data: data
                 });
             })

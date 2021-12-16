@@ -76,16 +76,18 @@ class Link_Checker_Admin {
 	}
 
 	function render_admin_page() {
-		$html = '';
+		$html = '<div class="link-checker">';
 		$html .= '<h1>Link Checker</h1>';
-		$html .= '<button id="linkCheckerStartBtn">Start</button>';
 		$html .= '
-		<div id="link_checker_vue_app">
-			Last check: {{ date }}
+		<div class="link-checker__vue_app">
+			<div>
+				<div class="link-checker__last-check">Last check: {{ date }}</div>
+				<button class="link-checker__btn-start" id="linkCheckerStartBtn">Start Crawling</button>
+			</div>
 
 		  	<div>
-			  	<div v-for="(urlsGroup, key) in results">
-				  	<h3>HTTP Code: {{ key === "---" ? "N/A" : key }}</h3>
+			  	<div v-for="(urlsGroup, key) in results" class="link-checker__status-code-box">
+				  	<h3>HTTP Status Code: {{ key === "---" ? "N/A" : key }} ({{ urlsGroup.length }} found)</h3>
 					<ul class="linkchecker__urls">
 						<li v-for="url in urlsGroup">
 							{{ url }}
@@ -94,6 +96,7 @@ class Link_Checker_Admin {
 				</div>
 			</div>
 		</div>';
+		$html .= '</div>';
 
 		echo $html;
 	}
@@ -148,7 +151,8 @@ class Link_Checker_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/link-checker-admin.css', array(), $this->version, 'all' );
+		$v = filemtime( plugin_dir_path( __FILE__ ) . 'css/link-checker-admin.css' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/link-checker-admin.css', array(), $v, 'all' );
 
 	}
 
