@@ -56,10 +56,9 @@
             $('.link-checker__btn-start').attr('disabled', 1);
             $.ajax('/wp-json/linkchecker/v1/check').done(() => {
                 $('.link-checker__btn-start').removeAttr('disabled');
-                // Give a few seconds while the new JSON file is created
-                setTimeout( () => {
-                    pullLastData();
-                }, 1000)
+                // TODO: re-render Vue template
+                // pullLastData();
+                location.reload();
             });
         });
     });
