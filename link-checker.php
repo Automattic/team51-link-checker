@@ -45,7 +45,7 @@ define( 'LINK_CHECKER_VERSION', '1.0.0' );
  * This action is documented in includes/class-link-checker-activator.php
  */
 function activate_link_checker() {
-	//require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-activator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-activator.php';
 	Link_Checker_Activator::activate();
 }
 
@@ -54,7 +54,7 @@ function activate_link_checker() {
  * This action is documented in includes/class-link-checker-deactivator.php
  */
 function deactivate_link_checker() {
-	//require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-deactivator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-link-checker-deactivator.php';
 	Link_Checker_Deactivator::deactivate();
 }
 
