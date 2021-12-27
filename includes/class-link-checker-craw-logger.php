@@ -61,16 +61,12 @@ class CrawlLogger extends CrawlObserver {
 			return;
 		}
 
-		// exclude 200 responses
-		if ( $response->getStatusCode() != "200" ) {
-			$this->addResult(
-				(string) $url,
-				(string) $foundOnUrl,
-				$response->getStatusCode(),
-				$response->getReasonPhrase()
-			);
-		}
-
+		$this->addResult(
+			(string) $url,
+			(string) $foundOnUrl,
+			$response->getStatusCode(),
+			$response->getReasonPhrase()
+		);
 	}
 
 	public function crawlFailed(
@@ -86,14 +82,20 @@ class CrawlLogger extends CrawlObserver {
 	}
 
 	public function addResult( $url, $foundOnUrl, $statusCode, $reason ) {
-		/*
-		* don't display duplicate results
-		* this happens if a redirect is followed to an existing page
-		*/
+		// exclude status code 200
+		if ( str_starts_with($statusCode, '2') ) {
+			return;
+		}
+		
+		// don't display duplicate results
+		// this happens if a redirect is followed to an existing page
 		if ( isset( $this->crawledUrls[ $statusCode ] ) && in_array( $url, $this->crawledUrls[ $statusCode ] ) ) {
 			return;
 		}
-		$this->crawledUrls[ $statusCode ][] = $url;
+		$this->crawledUrls[ $statusCode ][] = [
+			'url' => $url,
+			'foundOnUrl' => $foundOnUrl,
+		];
 	}
 
 	/*

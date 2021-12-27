@@ -26,3 +26,11 @@
 	 border-top: 1px solid #ddd;
 	 padding-top: 1rem;
  }
+
+ .link-checker table th {
+    text-align: left;
+    font-weight: 600;
+ }
+ .link-checker table td {
+    padding: 5px;
+ }
