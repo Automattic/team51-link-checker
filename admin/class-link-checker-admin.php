@@ -124,7 +124,7 @@ class Link_Checker_Admin {
 			$base_url = $_GET['testurl'];
 		}
 
-		$skip_external = true;
+		$skip_external = false;
 		// $timeout       = \WP_CLI\Utils\get_flag_value( $assoc_args, 'timeout', 10 );
 
 		$crawl_profile = $skip_external ? new CrawlInternalUrls( $base_url ) : new CrawlAllUrls();
