@@ -42,13 +42,26 @@ class CrawlLogger extends CrawlObserver {
 			WP_Filesystem();
 		}
 
+		$arr_404s = !empty( $this->crawledUrls['404'] ) ? $this->crawledUrls['404'] : array();
 		$crawl_content = array(
-			"date"   => date( "Y-m-d H:i:s" ),
-			"results" => $this->crawledUrls,
+			"date"    => date( "Y-m-d H:i:s" ),
+			"results" => array(
+				'404' => $arr_404s,
+			),
 		);
 
+
+		// Create JSON file
 		$last_result_file = plugin_dir_path(__DIR__) . 'link-checker-last-result.json';
 		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
+
+		// Create CSV File
+		$csv_content = "Found on,URL\n";
+		foreach( $arr_404s as $entry ) {
+			$csv_content .= $entry['url'] . ',' . $entry['foundOnUrl'] . "\n";
+		}
+		$last_result_file_csv = plugin_dir_path(__DIR__) . 'link-checker-last-result.csv';
+		$wp_filesystem->put_contents( $last_result_file_csv, $csv_content, 0644);
 	}
 
 
@@ -61,16 +74,12 @@ class CrawlLogger extends CrawlObserver {
 			return;
 		}
 
-		// exclude 200 responses
-		if ( $response->getStatusCode() != "200" ) {
-			$this->addResult(
-				(string) $url,
-				(string) $foundOnUrl,
-				$response->getStatusCode(),
-				$response->getReasonPhrase()
-			);
-		}
-
+		$this->addResult(
+			(string) $url,
+			(string) $foundOnUrl,
+			$response->getStatusCode(),
+			$response->getReasonPhrase()
+		);
 	}
 
 	public function crawlFailed(
@@ -86,14 +95,20 @@ class CrawlLogger extends CrawlObserver {
 	}
 
 	public function addResult( $url, $foundOnUrl, $statusCode, $reason ) {
-		/*
-		* don't display duplicate results
-		* this happens if a redirect is followed to an existing page
-		*/
+		// exclude status code 200
+		if ( str_starts_with($statusCode, '2') ) {
+			return;
+		}
+		
+		// don't display duplicate results
+		// this happens if a redirect is followed to an existing page
 		if ( isset( $this->crawledUrls[ $statusCode ] ) && in_array( $url, $this->crawledUrls[ $statusCode ] ) ) {
 			return;
 		}
-		$this->crawledUrls[ $statusCode ][] = $url;
+		$this->crawledUrls[ $statusCode ][] = [
+			'url' => $url,
+			'foundOnUrl' => $foundOnUrl,
+		];
 	}
 
 	/*

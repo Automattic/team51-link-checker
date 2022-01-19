@@ -1,5 +1,5 @@
 {
     "require": {
-        "spatie/crawler": "7.0.5"
+        "spatie/crawler": "5.0.1"
     }
 }

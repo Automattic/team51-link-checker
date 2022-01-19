@@ -81,18 +81,26 @@ class Link_Checker_Admin {
 		$html .= '
 		<div class="link-checker__vue_app">
 			<div>
-				<div class="link-checker__last-check">Last check: {{ date }}</div>
+				<div class="link-checker__last-check">Last check: {{ date | humanDate }}</div>
 				<button class="link-checker__btn-start">Start Crawling</button>
+				<a v-if="results && results[404]" class="link-checker__btn-start" target="_blank" href="/wp-content/plugins/team51-link-checker/link-checker-last-result.csv">Download CSV</a>
 			</div>
 
 		  	<div>
 			  	<div v-for="(urlsGroup, key) in results" class="link-checker__status-code-box">
 				  	<h3>HTTP Status Code: {{ key === "---" ? "N/A" : key }} ({{ urlsGroup.length }} found)</h3>
-					<ul class="linkchecker__urls">
-						<li v-for="url in urlsGroup">
-							{{ url }}
-						</li>
-					</ul>
+					<table class="linkchecker__urls">
+						<tr>
+							<th>Found on</th>
+							<th>URL</th>
+						</tr>
+						<tr v-for="row in urlsGroup">
+						<td>
+							<a v-bind:href="row.foundOnUrl">{{ row.foundOnUrl }}</a>
+						</td>
+							<td>{{ row.url }}</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>';
@@ -117,7 +125,7 @@ class Link_Checker_Admin {
 			$base_url = $_GET['testurl'];
 		}
 
-		$skip_external = true;
+		$skip_external = false;
 		// $timeout       = \WP_CLI\Utils\get_flag_value( $assoc_args, 'timeout', 10 );
 
 		$crawl_profile = $skip_external ? new CrawlInternalUrls( $base_url ) : new CrawlAllUrls();
