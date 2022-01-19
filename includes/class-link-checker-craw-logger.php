@@ -42,13 +42,26 @@ class CrawlLogger extends CrawlObserver {
 			WP_Filesystem();
 		}
 
+		$arr_404s = !empty( $this->crawledUrls['404'] ) ? $this->crawledUrls['404'] : array();
 		$crawl_content = array(
-			"date"   => date( "Y-m-d H:i:s" ),
-			"results" => $this->crawledUrls,
+			"date"    => date( "Y-m-d H:i:s" ),
+			"results" => array(
+				'404' => $arr_404s,
+			),
 		);
 
+
+		// Create JSON file
 		$last_result_file = plugin_dir_path(__DIR__) . 'link-checker-last-result.json';
 		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
+
+		// Create CSV File
+		$csv_content = "Found on,URL\n";
+		foreach( $arr_404s as $entry ) {
+			$csv_content .= $entry['url'] . ',' . $entry['foundOnUrl'] . "\n";
+		}
+		$last_result_file_csv = plugin_dir_path(__DIR__) . 'link-checker-last-result.csv';
+		$wp_filesystem->put_contents( $last_result_file_csv, $csv_content, 0644);
 	}
 
 

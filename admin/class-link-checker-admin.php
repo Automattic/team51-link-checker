@@ -83,6 +83,7 @@ class Link_Checker_Admin {
 			<div>
 				<div class="link-checker__last-check">Last check: {{ date | humanDate }}</div>
 				<button class="link-checker__btn-start">Start Crawling</button>
+				<a v-if="results[404]" class="link-checker__btn-start" target="_blank" href="/wp-content/plugins/team51-link-checker/link-checker-last-result.csv">Download CSV</a>
 			</div>
 
 		  	<div>
