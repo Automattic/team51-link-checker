@@ -87,21 +87,25 @@ class Link_Checker_Admin {
 			</div>
 
 		  	<div>
-			  	<div v-for="(urlsGroup, key) in results" class="link-checker__status-code-box">
-				  	<h3>HTTP Status Code: {{ key === "---" ? "N/A" : key }} ({{ urlsGroup.length }} found)</h3>
+			  	<details v-for="(urlsGroup, key) in results" class="link-checker__status-code-box">
+				  	<summary>HTTP Status Code: {{ key === "---" ? "N/A" : key }} ({{ urlsGroup.length }} found)</summary>
 					<table class="linkchecker__urls">
-						<tr>
-							<th>Found on</th>
-							<th>URL</th>
-						</tr>
-						<tr v-for="row in urlsGroup">
-						<td>
-							<a v-bind:href="row.foundOnUrl">{{ row.foundOnUrl }}</a>
-						</td>
-							<td>{{ row.url }}</td>
-						</tr>
+						<thead>
+							<tr>
+								<th>Found on</th>
+								<th>URL</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="row in urlsGroup">
+								<td>
+									<a v-bind:href="row.foundOnUrl">{{ row.foundOnUrl }}</a>
+								</td>
+								<td>{{ row.url }}</td>
+							</tr>
+						</tbody>
 					</table>
-				</div>
+				</details>
 			</div>
 		</div>';
 		$html .= '</div>';
@@ -125,12 +129,13 @@ class Link_Checker_Admin {
 			$base_url = $_GET['testurl'];
 		}
 
-		$skip_external = false;
+		$crawl_external = true;
 		// $timeout       = \WP_CLI\Utils\get_flag_value( $assoc_args, 'timeout', 10 );
 
-		$crawl_profile = $skip_external ? new CrawlInternalUrls( $base_url ) : new CrawlAllUrls();
+		$crawl_profile = $crawl_external ? new CrawlAllUrls() : new CrawlInternalUrls( $base_url );
 
-		$crawl_logger = new CrawlLogger();
+		Link_Checker_Logger::log('Starting a new CrawlReporter()');
+		$crawl_logger = new CrawlReporter();
 		//$crawl_logger->setOutputFile( 'linker.log' );
 
 		$concurrent_connections = 10;
@@ -138,7 +143,7 @@ class Link_Checker_Admin {
 
 		$client_options = array(
 			RequestOptions::TIMEOUT         => $timeout,
-			RequestOptions::VERIFY          => ! $skip_external,
+			RequestOptions::VERIFY          => $crawl_external,
 			RequestOptions::ALLOW_REDIRECTS => array(
 				'track_redirects' => true,
 			),
@@ -150,6 +155,7 @@ class Link_Checker_Admin {
 			->setCrawlProfile( $crawl_profile )
 			->ignoreRobots();
 
+		Link_Checker_Logger::log('startCrawling()');
 		$crawler->startCrawling( $base_url );
 	}
 

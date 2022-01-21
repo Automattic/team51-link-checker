@@ -3,34 +3,43 @@
  * included in this file.
  */
 
- .link-checker {
-	 
- }
+.link-checker {}
 
- .link-checker__last-check {
-	background-color: #ddd;
-    border-radius: 4px;
-    margin: 1rem 0 0;
-    padding: 1rem;
-    display: inline-block;
- }
+.link-checker__last-check {
+   background-color: #ddd;
+   border-radius: 4px;
+   margin: 1rem 0 0;
+   padding: 1rem;
+   display: inline-block;
+}
 
- .link-checker__btn-start {
-	display: inline-block;
-    margin-left: 1rem;
-    padding: 0.7rem;
- }
+.link-checker__btn-start {
+   display: inline-block;
+   margin-left: 1rem;
+   padding: 0.7rem;
+}
 
- .link-checker__status-code-box {
-	 margin: 1rem 0 0;
-	 border-top: 1px solid #ddd;
-	 padding-top: 1rem;
- }
+.link-checker__status-code-box {
+   margin: 1rem 0 0;
+   border-top: 1px solid #ddd;
+   padding-top: 1rem;
+}
 
- .link-checker table th {
-    text-align: left;
-    font-weight: 600;
- }
- .link-checker table td {
-    padding: 5px;
- }
+.link-checker__status-code-box summary {
+   cursor: pointer;
+   font-size: 1.2rem;
+   margin-bottom: 1rem;
+}
+
+.link-checker table th {
+   text-align: left;
+   font-weight: 600;
+}
+
+.link-checker table tbody tr:nth-child(odd) {
+   background-color: #dedede;
+}
+
+.link-checker table td {
+   padding: 5px;
+}
