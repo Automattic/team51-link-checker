@@ -34,7 +34,6 @@ class CrawlReporter extends CrawlObserver {
 	 * Called when the crawl has ended.
 	 */
 	public function finishedCrawling(): void {
-		Link_Checker_Logger::log('finishedCrawling');
 		ksort( $this->crawledUrls );
 
 		global $wp_filesystem;
@@ -43,13 +42,10 @@ class CrawlReporter extends CrawlObserver {
 			WP_Filesystem();
 		}
 
-		$arr_404s = !empty( $this->crawledUrls['404'] ) ? $this->crawledUrls['404'] : array();
-		Link_Checker_Logger::log('Count 404: ' . count( $arr_404s ));
+		$crawl_results = !empty( $this->crawledUrls ) ? $this->crawledUrls : array();
 		$crawl_content = array(
 			"date"    => date( "Y-m-d H:i:s" ),
-			"results" => array(
-				'404' => $arr_404s,
-			),
+			"results" => $crawl_results,
 		);
 
 
@@ -59,9 +55,11 @@ class CrawlReporter extends CrawlObserver {
 		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
 
 		// Create CSV File
-		$csv_content = "Found on,URL\n";
-		foreach( $arr_404s as $entry ) {
-			$csv_content .= $entry['foundOnUrl'] . ',' . $entry['url'] . "\n";
+		foreach( $crawl_results as $status_code => $rows) {
+			$csv_content = "Found on, $status_code URL\n";
+			foreach( $rows as $entry ) {
+				$csv_content .= $entry['foundOnUrl'] . ',' . $entry['url'] . "\n";
+			}
 		}
 		$last_result_file_csv = plugin_dir_path(__DIR__) . 'link-checker-last-result.csv';
 		$wp_filesystem->put_contents( $last_result_file_csv, $csv_content, 0644);
