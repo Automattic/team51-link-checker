@@ -99,9 +99,11 @@ class Link_Checker_Admin {
 						<tbody>
 							<tr v-for="row in urlsGroup">
 								<td>
-									<a v-bind:href="row.foundOnUrl">{{ row.foundOnUrl }}</a>
+									<a v-bind:href="row.foundOnUrl" target="_blank">{{ row.foundOnUrl }}</a>
 								</td>
-								<td>{{ row.url }}</td>
+								<td>
+									<a v-bind:href="row.url" target="_blank">{{ row.url }}</a>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -134,7 +136,6 @@ class Link_Checker_Admin {
 
 		$crawl_profile = $crawl_external ? new CrawlAllUrls() : new CrawlInternalUrls( $base_url );
 
-		Link_Checker_Logger::log('Starting a new CrawlReporter()');
 		$crawl_logger = new CrawlReporter();
 		//$crawl_logger->setOutputFile( 'linker.log' );
 
