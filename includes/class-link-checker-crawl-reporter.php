@@ -7,7 +7,7 @@ use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CrawlLogger extends CrawlObserver {
+class CrawlReporter extends CrawlObserver {
 	const UNRESPONSIVE_HOST = 'Host did not respond';
 	const REDIRECT          = 'Redirect';
 
@@ -42,26 +42,29 @@ class CrawlLogger extends CrawlObserver {
 			WP_Filesystem();
 		}
 
-		$arr_404s = !empty( $this->crawledUrls['404'] ) ? $this->crawledUrls['404'] : array();
+		$crawl_results = !empty( $this->crawledUrls ) ? $this->crawledUrls : array();
 		$crawl_content = array(
 			"date"    => date( "Y-m-d H:i:s" ),
-			"results" => array(
-				'404' => $arr_404s,
-			),
+			"results" => $crawl_results,
 		);
 
 
 		// Create JSON file
+		Link_Checker_Logger::log('creating JSON and CSV');
 		$last_result_file = plugin_dir_path(__DIR__) . 'link-checker-last-result.json';
 		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
 
 		// Create CSV File
-		$csv_content = "Found on,URL\n";
-		foreach( $arr_404s as $entry ) {
-			$csv_content .= $entry['url'] . ',' . $entry['foundOnUrl'] . "\n";
+		$csv_content = "Found on, Link\n";
+		foreach( $crawl_results as $status_code => $rows) {
+			$csv_content .= "$status_code,\n";
+			foreach( $rows as $entry ) {
+				$csv_content .= $entry['foundOnUrl'] . ',' . $entry['url'] . "\n";
+			}
 		}
 		$last_result_file_csv = plugin_dir_path(__DIR__) . 'link-checker-last-result.csv';
 		$wp_filesystem->put_contents( $last_result_file_csv, $csv_content, 0644);
+		Link_Checker_Logger::log('----- end -----');
 	}
 
 
@@ -90,7 +93,7 @@ class CrawlLogger extends CrawlObserver {
 		if ( $response = $requestException->getResponse() ) {
 			$this->crawled( $url, $response, $foundOnUrl );
 		} else {
-			$this->addResult( (string) $url, (string) $foundOnUrl, '---', self::UNRESPONSIVE_HOST );
+			$this->addResult( (string) $url, (string) $foundOnUrl, 'N/A', self::UNRESPONSIVE_HOST );
 		}
 	}
 

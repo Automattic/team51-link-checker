@@ -102,8 +102,9 @@ class Link_Checker {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-logger.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-loader.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-craw-logger.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-link-checker-crawl-reporter.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
