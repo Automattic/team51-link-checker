@@ -83,12 +83,12 @@ class Link_Checker_Admin {
 			<div>
 				<div class="link-checker__last-check">Last check: {{ date | humanDate }}</div>
 				<button class="link-checker__btn-start">Start Crawling</button>
-				<a v-if="results && results[404]" class="link-checker__btn-start" target="_blank" href="/wp-content/plugins/team51-link-checker/link-checker-last-result.csv">Download CSV</a>
+				<a v-if="results && results[404]" class="link-checker__btn" target="_blank" href="/wp-content/plugins/team51-link-checker/link-checker-last-result.csv">Download CSV</a>
 			</div>
 
 		  	<div>
 			  	<details v-for="(urlsGroup, key) in results" class="link-checker__status-code-box">
-				  	<summary>HTTP Status Code: {{ key === "---" ? "N/A" : key }} ({{ urlsGroup.length }} found)</summary>
+				  	<summary>HTTP Status Code: {{ key }} ({{ urlsGroup.length }} found)</summary>
 					<table class="linkchecker__urls">
 						<thead>
 							<tr>
@@ -157,6 +157,8 @@ class Link_Checker_Admin {
 			->ignoreRobots();
 
 		Link_Checker_Logger::log('startCrawling()');
+		// $observers = $crawler->getCrawlObservers();
+		// Link_Checker_Logger::log('Observers count:' . count( $observers->toArray() ) );
 		$crawler->startCrawling( $base_url );
 	}
 

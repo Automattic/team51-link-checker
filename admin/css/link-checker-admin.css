@@ -13,7 +13,8 @@
    display: inline-block;
 }
 
-.link-checker__btn-start {
+.link-checker__btn-start,
+.link-checker__btn {
    display: inline-block;
    margin-left: 1rem;
    padding: 0.7rem;

@@ -55,8 +55,9 @@ class CrawlReporter extends CrawlObserver {
 		$wp_filesystem->put_contents( $last_result_file, json_encode($crawl_content), 0644);
 
 		// Create CSV File
+		$csv_content = "Found on, Link\n";
 		foreach( $crawl_results as $status_code => $rows) {
-			$csv_content = "Found on, $status_code URL\n";
+			$csv_content .= "$status_code,\n";
 			foreach( $rows as $entry ) {
 				$csv_content .= $entry['foundOnUrl'] . ',' . $entry['url'] . "\n";
 			}
@@ -92,7 +93,7 @@ class CrawlReporter extends CrawlObserver {
 		if ( $response = $requestException->getResponse() ) {
 			$this->crawled( $url, $response, $foundOnUrl );
 		} else {
-			$this->addResult( (string) $url, (string) $foundOnUrl, '---', self::UNRESPONSIVE_HOST );
+			$this->addResult( (string) $url, (string) $foundOnUrl, 'N/A', self::UNRESPONSIVE_HOST );
 		}
 	}
 
