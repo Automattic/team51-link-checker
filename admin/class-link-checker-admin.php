@@ -139,7 +139,9 @@ class Link_Checker_Admin {
 		$crawl_logger = new CrawlReporter();
 		//$crawl_logger->setOutputFile( 'linker.log' );
 
-		$concurrent_connections = 10;
+		// TODO: Would be nice to make this concurrent_connection number a UI option. 
+		// When value is 10, Pressable triggers too many 429 adding noise to the report
+		$concurrent_connections = 3;
 		$timeout                = 10;
 
 		$client_options = array(
