@@ -73,6 +73,20 @@ class Link_Checker_Admin {
 				);
 			}
 		);
+
+		add_action(
+			'rest_api_init',
+			function () {
+				register_rest_route(
+					'linkchecker/v1',
+					'/fetch',
+					array(
+						'methods'  => 'GET',
+						'callback' => array( $this, 'api_fetch' ),
+					)
+				);
+			}
+		);
 	}
 
 	public function add_admin_menu() {
@@ -122,10 +136,12 @@ class Link_Checker_Admin {
 	public function api_check() {
 		// Run the scanner.
 		$this->scan();
+		return 'ok';
+	}
 
-		// After the scanner has run, expose the json file data to the rest endpoint.
-		$json = include LINK_CHECKER_PLUGIN_DIR . '/link-checker-last-result.json';
-		return empty( $json ) ? '{}' : $json;
+	public function api_fetch() {
+		$json = include LINK_CHECKER_PLUGIN_DIR . 'link-checker-last-result.json';
+		return ( empty( $json ) ) ? '{}' : $json;
 	}
 
 	private function scan() {
