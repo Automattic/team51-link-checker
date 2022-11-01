@@ -36,17 +36,21 @@
         }
 
         function pullLastData () {
+            
             $.ajax( `/wp-content/plugins/team51-link-checker/link-checker-last-result.json?v=${ Date.now() }` )
                 .complete( ( data ) => {
+                   
                     if ( !vm ) {
                         var vm = new Vue( {
                             el: '.link-checker__vue_app',
-                            data: data || {},
+                            data: ( data.date ) ? data :{
+                                date: 'Not run yet',
+                                results: []
+                            },
                             filters: {
                                 humanDate: function ( date ) {
+                                    
                                     if ( !date ) return '';
-                                    const event = new Date( date );
-                                    const eventTimestamp = Date.parse( date );
 
                                     return fromNow( date );
                                 }
@@ -56,7 +60,7 @@
 
                     vm.date = data.date;
                     vm.results = data.results;
-                 } )
+                 } );
         }
 
         /**
