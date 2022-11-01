@@ -47,6 +47,7 @@
                                     if ( !date ) return '';
                                     const event = new Date( date );
                                     const eventTimestamp = Date.parse( date );
+
                                     return fromNow( date );
                                 }
                             }
@@ -85,8 +86,10 @@
                 { ge: 30 * SECOND, divisor: SECOND, unit: 'seconds' },
                 { ge: 0, divisor: 1, text: 'just now' },
             ];
-            const now = typeof nowDate === 'object' ? nowDate.getTime() : new Date( nowDate ).getTime();
-            const diff = now - ( typeof date === 'object' ? date : new Date( date ) ).getTime();
+            const offset = typeof date === 'object' ? date.getTimezoneOffset() : new Date( date ).getTimezoneOffset();
+            const trueOffset = offset * 60 * 1000;
+            const now = typeof nowDate === 'object' ? nowDate.getTime() + trueOffset : new Date( nowDate ).getTime() + trueOffset;
+            const diff = now - ( typeof date === 'object' ? date: new Date( date ) ).getTime();
             const diffAbs = Math.abs( diff );
             for ( const interval of intervals ) {
                 if ( diffAbs >= interval.ge ) {
