@@ -60,9 +60,13 @@ class Link_Checker_Admin {
 
 	private function add_action_rest_api() {
 		// Custom endpoint
-		add_action( 'rest_api_init', function () {
-			register_rest_route( 'linkchecker/v1','/check',
-				array(
+		add_action(
+			'rest_api_init',
+			function () {
+				register_rest_route(
+					'linkchecker/v1',
+					'/check',
+					array(
 						'methods'  => 'GET',
 						'callback' => array( $this, 'api_check' ),
 					)
@@ -75,8 +79,8 @@ class Link_Checker_Admin {
 		add_menu_page( 'Link Checker', 'Link Checker', 'manage_options', 'team51-link-checker', array( $this, 'render_admin_page' ), 'dashicons-editor-unlink' );
 	}
 
-	function render_admin_page() {
-		$html = '<div class="link-checker">';
+	public function render_admin_page() {
+		$html  = '<div class="link-checker">';
 		$html .= '<h1>Link Checker</h1>';
 		$html .= '
 		<div class="link-checker__vue_app">
@@ -139,7 +143,7 @@ class Link_Checker_Admin {
 		$crawl_logger = new CrawlReporter();
 		//$crawl_logger->setOutputFile( 'linker.log' );
 
-		// TODO: Would be nice to make this concurrent_connection number a UI option. 
+		// TODO: Would be nice to make this concurrent_connection number a UI option.
 		// When value is 10, Pressable triggers too many 429 adding noise to the report
 		$concurrent_connections = 3;
 		$timeout                = 10;
@@ -158,7 +162,7 @@ class Link_Checker_Admin {
 			->setCrawlProfile( $crawl_profile )
 			->ignoreRobots();
 
-		Link_Checker_Logger::log('startCrawling()');
+		Link_Checker_Logger::log( 'startCrawling()' );
 		// $observers = $crawler->getCrawlObservers();
 		// Link_Checker_Logger::log('Observers count:' . count( $observers->toArray() ) );
 		$crawler->startCrawling( $base_url );
