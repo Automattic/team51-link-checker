@@ -119,9 +119,13 @@ class Link_Checker_Admin {
 		echo $html;
 	}
 
-	function api_check() {
+	public function api_check() {
+		// Run the scanner.
 		$this->scan();
-		return 'ok';
+
+		// After the scanner has run, expose the json file data to the rest endpoint.
+		$json = include LINK_CHECKER_PLUGIN_DIR . '/link-checker-last-result.json';
+		return empty( $json ) ? '{}' : $json;
 	}
 
 	private function scan() {

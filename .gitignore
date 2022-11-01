@@ -3,3 +3,4 @@ link-checker-last-result.json
 link-checker-last-result.csv
 .DS_Store
 /admin/.DS_Store
+link-checker.log

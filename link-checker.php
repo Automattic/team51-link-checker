@@ -39,6 +39,7 @@ require_once dirname( __FILE__ ) . '/includes/class-link-checker.php';
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'LINK_CHECKER_VERSION', '1.0.0' );
+define( 'LINK_CHECKER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.
